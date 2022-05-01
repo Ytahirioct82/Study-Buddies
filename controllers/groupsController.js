@@ -1,47 +1,47 @@
+const { group } = require("console");
 const express = require("express");
 const groups = express.Router();
-const {
-  getAllGroups,
-  getGroupDetails,
-  createNewGroup,
-  updateGroupDetails,
-  getAllEventsOfGroup,
-  createEventForGroup,
-} = require("../queries/events.js");
+const eventsController = require("./eventsController");
+const { getAllGroups, getGroupDetails, createNewGroup, updateGroupDetails } = require("../queries/groupFunc.js");
+
+groups.use("/:gid/events", eventsController);
 
 groups.get("/", async (req, res) => {
-  const { id, type } = req.query;
-
-  if (type === "event") {
-    const AllEventsOfGroup = await getAllEventsOfGroup(id);
-    AllEventsOfGroup ? res.send(AllEventsOfGroup) : res.status(404).json("Page not found");
-  } else {
-    const AllGroups = await getAllGroups();
-    AllGroups ? res.send(AllGroups) : res.status(404).json("Page not found");
+  const AllGroups = await getAllGroups();
+  try {
+    res.status(200).json(AllGroups);
+  } catch (error) {
+    res.status(404).json(`Page Not Found: ${error}`);
   }
 });
 
-groups.get("/:id", async (req, res) => {
-  const { id } = req.params;
-  const oneGroup = await getGroupDetails(id);
-  oneGroup ? res.send(oneGroup) : res.status(404).json("Page not found");
+groups.get("/:gid", async (req, res) => {
+  const { gid } = req.params;
+  const oneGroup = await getGroupDetails(gid);
+  try {
+    res.status(200).json(oneGroup);
+  } catch (error) {
+    res.status(404).json(`Page Not Found: ${error}`);
+  }
 });
 
 groups.post("/", async (req, res) => {
-  const { id, type } = req.query;
-  if (type === "event") {
-    const newGroupEvent = await createEventForGroup(id, req.body);
-    newGroupEvent ? res.send(newGroupEvent) : res.status(404).json("Page not found");
-  } else {
-    const newGroup = await createNewGroup(req.body);
-    newGroup ? res.send(newGroup) : res.status(404).json("Page not found");
+  const newGroup = await createNewGroup(req.body);
+  try {
+    res.status(200).json(newGroup);
+  } catch (error) {
+    res.status(404).json(`Page Not Found: ${error}`);
   }
 });
 
-groups.put("/:id", async (req, res) => {
-  const { id } = req.params;
-  const updated = await updateGroupDetails(id);
-  updated ? res.send(updated) : res.status(404).json("Page not found");
+groups.put("/:gid", async (req, res) => {
+  const { gid } = req.params;
+  const updated = await updateGroupDetails(gid, req.body);
+  try {
+    res.status(200).json(updated);
+  } catch (error) {
+    res.status(404).json(`Page Not Found: ${error}`);
+  }
 });
 
 module.exports = groups;
