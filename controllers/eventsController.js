@@ -8,42 +8,48 @@ const {
   updateEventDetails,
 } = require("../queries/eventFunc.js");
 
-events.get("/:id", async (req, res) => {
-  console.log(req.params);
-  const { id } = req.params;
-  const eventDetails = await getSpecificEvent(id);
-  try {
-    res.status(200).json(eventDetails);
-  } catch (error) {
-    res.status(404).json(`Page not found:${error}`);
-  }
-});
+events
+  .route("/:id")
+  .get(async (req, res) => {
+    try {
+      const { id } = req.params;
+      const eventDetails = await getSpecificEvent(id);
+      res.status(200).json(eventDetails);
+    } catch (error) {
+      res.status(500).json(`The following has occurred: ${error.message}`);
+    }
+  })
 
-events.put("/:id", async (req, res) => {
-  const { id } = req.params;
-  const updatedEvent = await updateEventDetails(id, 2);
-  updatedEvent ? res.status(200).json(updatedEvent) : res.status(404).json("Page not found");
-});
+  .put(async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updatedEvent = await updateEventDetails(id, 2);
+      res.status(200).json(updatedEvent);
+    } catch (error) {
+      res.status(500).json(`The following has occurred: ${error.message}`);
+    }
+  });
 
-events.get("/", async (req, res) => {
-  const { gid } = req.params;
-  console.log(req.params);
-  const allEvents = await getAllEventsOfGroup(gid);
-  try {
-    res.status(200).json(allEvents);
-  } catch (error) {
-    res.status(404).json(`Page not found:${error}`);
-  }
-});
+events
+  .route("/")
+  .get(async (req, res) => {
+    try {
+      const { gid } = req.params;
+      const allEvents = await getAllEventsOfGroup(gid);
+      res.status(200).json(allEvents);
+    } catch (error) {
+      res.status(500).json(`The following has occurred: ${error.message}`);
+    }
+  })
 
-events.post("/", async (req, res) => {
-  const { gid } = req.params;
-  const newEvent = await createEventForGroup(gid, req.body);
-  try {
-    res.status(200).json(newEvent);
-  } catch (error) {
-    res.status(404).json(`Page Not Found: ${error}`);
-  }
-});
+  .post(async (req, res) => {
+    try {
+      const { gid } = req.params;
+      const newEvent = await createEventForGroup(gid, req.body);
+      res.status(200).json(newEvent);
+    } catch (error) {
+      res.status(500).json(`The following has occurred: ${error.message}`);
+    }
+  });
 
 module.exports = events;

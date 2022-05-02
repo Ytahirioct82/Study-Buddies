@@ -5,7 +5,7 @@ const getAllGroups = async () => {
     const AllGroups = await db.any("SELECT * FROM study_groups ORDER BY name");
     return AllGroups;
   } catch (error) {
-    return error;
+    throw error;
   }
 };
 
@@ -14,7 +14,7 @@ const getGroupDetails = async (gid) => {
     const oneGroupDetails = await db.one("SELECT * FROM study_groups WHERE id=$1", gid);
     return oneGroupDetails;
   } catch (error) {
-    return error;
+    throw error;
   }
 };
 
@@ -28,7 +28,7 @@ const createNewGroup = async (addGroup) => {
     );
     return newGroup;
   } catch (error) {
-    return error;
+    throw error;
   }
 };
 
@@ -41,7 +41,7 @@ const updateGroupDetails = async (gid, editGroup) => {
     );
     return update;
   } catch (error) {
-    return error;
+    throw error;
   }
 };
 

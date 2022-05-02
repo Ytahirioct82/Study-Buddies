@@ -6,42 +6,46 @@ const { getAllGroups, getGroupDetails, createNewGroup, updateGroupDetails } = re
 
 groups.use("/:gid/events", eventsController);
 
-groups.get("/", async (req, res) => {
-  const AllGroups = await getAllGroups();
-  try {
-    res.status(200).json(AllGroups);
-  } catch (error) {
-    res.status(404).json(`Page Not Found: ${error}`);
-  }
-});
+groups
+  .route("/")
+  .get(async (req, res) => {
+    try {
+      const AllGroups = await getAllGroups();
+      res.status(200).json(AllGroups);
+    } catch (error) {
+      res.status(500).json(`The following has occurred: ${error.message}`);
+    }
+  })
 
-groups.get("/:gid", async (req, res) => {
-  const { gid } = req.params;
-  const oneGroup = await getGroupDetails(gid);
-  try {
-    res.status(200).json(oneGroup);
-  } catch (error) {
-    res.status(404).json(`Page Not Found: ${error}`);
-  }
-});
+  .post(async (req, res) => {
+    try {
+      const newGroup = await createNewGroup(req.body);
+      res.status(200).json(newGroup);
+    } catch (error) {
+      res.status(500).json(`The following has occurred: ${error.message}`);
+    }
+  });
 
-groups.post("/", async (req, res) => {
-  const newGroup = await createNewGroup(req.body);
-  try {
-    res.status(200).json(newGroup);
-  } catch (error) {
-    res.status(404).json(`Page Not Found: ${error}`);
-  }
-});
+groups
+  .route("/:gid")
+  .get(async (req, res) => {
+    try {
+      const { gid } = req.params;
+      const oneGroup = await getGroupDetails(gid);
+      res.status(200).json(oneGroup);
+    } catch (error) {
+      res.status(500).json(`The following has occurred: ${error.message}`);
+    }
+  })
 
-groups.put("/:gid", async (req, res) => {
-  const { gid } = req.params;
-  const updated = await updateGroupDetails(gid, req.body);
-  try {
-    res.status(200).json(updated);
-  } catch (error) {
-    res.status(404).json(`Page Not Found: ${error}`);
-  }
-});
+  .put(async (req, res) => {
+    try {
+      const { gid } = req.params;
+      const updated = await updateGroupDetails(gid, req.body);
+      res.status(200).json(updated);
+    } catch (error) {
+      res.status(500).json(`The following has occurred: ${error.message}`);
+    }
+  });
 
 module.exports = groups;
