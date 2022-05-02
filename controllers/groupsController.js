@@ -1,10 +1,12 @@
 const { group } = require("console");
 const express = require("express");
 const groups = express.Router();
-const eventsController = require("./eventsController");
+// const eventsController = require("./eventsController");
 const { getAllGroups, getGroupDetails, createNewGroup, updateGroupDetails } = require("../queries/groupFunc.js");
 
-groups.use("/:gid/events", eventsController);
+const { getAllEventsOfGroup, createEventForGroup } = require("../queries/eventFunc.js");
+
+// groups.use("/:gid/events", eventsController);
 
 groups.get("/", async (req, res) => {
   const AllGroups = await getAllGroups();
@@ -12,6 +14,16 @@ groups.get("/", async (req, res) => {
     res.status(200).json(AllGroups);
   } catch (error) {
     res.status(404).json(`Page Not Found: ${error}`);
+  }
+});
+groups.get("/:gid/events", async (req, res) => {
+  const { gid } = req.params;
+
+  const allEvents = await getAllEventsOfGroup(gid);
+  try {
+    res.status(200).json(allEvents);
+  } catch (error) {
+    res.status(404).json(`Page not found:${error}`);
   }
 });
 
@@ -29,6 +41,17 @@ groups.post("/", async (req, res) => {
   const newGroup = await createNewGroup(req.body);
   try {
     res.status(200).json(newGroup);
+  } catch (error) {
+    res.status(404).json(`Page Not Found: ${error}`);
+  }
+});
+
+groups.post("/:gid/events", async (req, res) => {
+  console.log(req.body);
+  const { gid } = req.params;
+  const newEvent = await createEventForGroup(gid, req.body);
+  try {
+    res.status(200).json(newEvent);
   } catch (error) {
     res.status(404).json(`Page Not Found: ${error}`);
   }

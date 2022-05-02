@@ -3,7 +3,6 @@ const db = require("../db/dbConfig.js");
 const getAllGroups = async () => {
   try {
     const AllGroups = await db.any("SELECT * FROM study_groups ORDER BY name");
-    console.log(AllGroups);
     return AllGroups;
   } catch (error) {
     return error;
@@ -27,7 +26,6 @@ const createNewGroup = async (addGroup) => {
       "INSERT INTO study_groups (name, main_focus, formed, contact) VALUES ($1, $2, $3, $4) RETURNING *",
       [name, main_focus, formed, contact]
     );
-    console.log(newGroup);
     return newGroup;
   } catch (error) {
     return error;
