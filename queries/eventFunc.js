@@ -2,7 +2,6 @@ const db = require("../db/dbConfig.js");
 
 const getAllEventsOfGroup = async (gid) => {
   try {
-    console.log(gid);
     const AllEventsOfGroup = await db.any("SELECT * FROM events WHERE study_group_id=$1", gid);
     return AllEventsOfGroup;
   } catch (error) {
